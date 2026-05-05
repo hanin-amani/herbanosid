@@ -55,21 +55,21 @@ export default function Header() {
     }
   };
 
-  // WARNA HIJAU DIPERTEBAL: Menggunakan bg-green-100 dan border-b-green-200
+  // CLEAN WHITE LOGIC: Background hijau dihapus, diganti putih bersih
   const headerClass = !mounted 
-    ? "bg-green-100/50 py-6 border-b border-transparent" 
+    ? "bg-white py-6 border-b border-transparent" 
     : isScrolled 
       ? "bg-white/95 backdrop-blur-md shadow-md py-3 border-b border-gray-100" 
-      : "bg-green-100/90 py-6 border-b border-green-200/50";
+      : "bg-white py-6 border-b border-gray-50";
 
   return (
     <header className={`fixed top-0 w-full z-50 transition-all duration-500 ${headerClass}`}>
       <div className="container mx-auto px-4 max-w-6xl flex items-center justify-between">
         
-        {/* 1. LOGO AREA */}
+        {/* 1. LOGO AREA - Ditambahkan Drop Shadow */}
         <div className="flex items-center">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative flex-shrink-0 transition-transform duration-300 group-hover:rotate-3">
+            <div className="relative flex-shrink-0 transition-transform duration-300 group-hover:rotate-3 drop-shadow-md">
               <img
                 src="/images/herbanos.png" 
                 alt="Logo Herbanos"
@@ -77,7 +77,7 @@ export default function Header() {
               />
             </div>
             
-            <div className="flex items-baseline leading-none">
+            <div className="flex items-baseline leading-none drop-shadow-sm">
               <span className="text-2xl font-black tracking-tight text-gray-900 lowercase">
                 herba<span className="text-green-700">nos</span>
               </span>
@@ -162,7 +162,7 @@ export default function Header() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-0 w-full bg-white border-t border-green-100 shadow-2xl lg:hidden overflow-hidden"
+            className="absolute top-full left-0 w-full bg-white border-t border-gray-100 shadow-2xl lg:hidden overflow-hidden"
           >
             <nav className="flex flex-col p-6 gap-4">
               {navLinks.map((link) => (
