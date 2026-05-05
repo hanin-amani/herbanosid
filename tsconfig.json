@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
+    "target": "esnext",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -18,6 +18,8 @@
         "name": "next"
       }
     ],
+    /* Properti krusial agar alias @/ bekerja dari root */
+    "baseUrl": ".", 
     "paths": {
       "@/*": ["./*"]
     }
@@ -28,7 +30,10 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    "**/*.mts",
+    /* Tambahkan ini untuk memastikan file config ter-indeks */
+    "sanity.config.ts",
+    "sanity.cli.ts"
   ],
   "exclude": ["node_modules"]
 }

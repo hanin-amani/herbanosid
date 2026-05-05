@@ -1,6 +1,10 @@
-import React from 'react';
+"use client";
 
-// --- CUSTOM SVG ICONS (Bebas Error Build & Ringan) ---
+import React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+
+// --- CUSTOM SVG ICONS ---
 const IconFacebook = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
 );
@@ -23,44 +27,56 @@ export default function Footer() {
   return (
     <footer className="bg-[#1a1a1a] text-white">
       {/* 1. MAIN FOOTER CONTENT */}
-      {/* Lebar disesuaikan ke max-w-6xl agar sejajar lurus dari atas ke bawah */}
-      <div className="container mx-auto px-4 py-12 max-w-6xl">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 items-start">
+      <div className="container mx-auto px-4 py-16 max-w-6xl">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-16 items-start">
           
-          {/* Logo Section */}
-          <div className="flex items-center justify-center md:justify-start">
+          {/* Logo Section - Disesuaikan dengan Header Baru */}
+          <div className="flex flex-col items-center md:items-start gap-4">
              <div className="flex items-center gap-3">
-                {/* Daun Hijau SVG */}
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 2C12 2 15 5 15 9C15 13 12 17 12 17C12 17 9 13 9 9C9 5 12 2 12 2Z" fill="#4ade80"/>
-                  <path d="M12 2C7 2 3 7 3 12C3 17 7 22 12 22C17 22 21 17 21 12C21 7 17 22 12 2Z" stroke="#4ade80" strokeWidth="1" strokeLinecap="round"/>
-                </svg>
-                <span className="text-3xl font-bold tracking-tighter italic">herbanos.id</span>
+                <div className="relative w-10 h-10">
+                  <Image 
+                    src="/images/herbanos.png" 
+                    alt="Logo Herbanos" 
+                    fill 
+                    className="object-contain brightness-0 invert" // Membuat logo menjadi putih agar kontras di BG gelap
+                  />
+                </div>
+                <div className="flex items-baseline leading-none">
+                  <span className="text-2xl font-black tracking-tight lowercase">
+                    herba<span className="text-green-500">nos</span>
+                  </span>
+                  <span className="text-xl font-bold tracking-tight text-green-500/80 lowercase">
+                    .id
+                  </span>
+                </div>
              </div>
+             <p className="text-xs text-gray-400 mt-2 text-center md:text-left leading-relaxed">
+               Pusat informasi kesehatan alami dan gaya hidup sehat terpercaya di Indonesia.
+             </p>
           </div>
 
           {/* Tentang Kami Section */}
           <div>
-            <h4 className="text-lg font-bold mb-6 uppercase tracking-wider">Tentang Kami</h4>
+            <h4 className="text-sm font-black mb-6 uppercase tracking-[0.2em] text-green-500">Tentang Kami</h4>
             <p className="text-gray-400 text-sm leading-relaxed">
-              www.herbanos.id merupakan website resmi penjualan Natura Oil Squa. Kami berkomitmen menyajikan informasi kesehatan herbal yang terpercaya.
+              www.herbanos.id merupakan website resmi penjualan **Natura Oil Squa**. Kami berkomitmen menyajikan informasi kesehatan herbal yang terpercaya dan artikel bermanfaat untuk masyarakat.
             </p>
           </div>
 
           {/* Ikuti Kami Section */}
-          <div>
-            <h4 className="text-lg font-bold mb-6 uppercase tracking-wider">Ikuti Kami</h4>
+          <div className="flex flex-col items-center md:items-start">
+            <h4 className="text-sm font-black mb-6 uppercase tracking-[0.2em] text-green-500">Ikuti Kami</h4>
             <div className="flex gap-3">
-              <a href="#" className="w-10 h-10 flex items-center justify-center bg-[#262626] hover:bg-green-700 transition-all duration-300 rounded-sm">
+              <a href="#" className="w-10 h-10 flex items-center justify-center bg-[#262626] hover:bg-green-700 hover:text-white text-gray-400 transition-all duration-300 rounded-sm">
                 <IconFacebook />
               </a>
-              <a href="mailto:admin@herbanos.id" className="w-10 h-10 flex items-center justify-center bg-[#262626] hover:bg-green-700 transition-all duration-300 rounded-sm">
+              <a href="mailto:admin@herbanos.id" className="w-10 h-10 flex items-center justify-center bg-[#262626] hover:bg-green-700 hover:text-white text-gray-400 transition-all duration-300 rounded-sm">
                 <IconMail />
               </a>
-              <a href="#" className="w-10 h-10 flex items-center justify-center bg-[#262626] hover:bg-green-700 transition-all duration-300 rounded-sm">
+              <a href="#" className="w-10 h-10 flex items-center justify-center bg-[#262626] hover:bg-green-700 hover:text-white text-gray-400 transition-all duration-300 rounded-sm">
                 <IconTikTok />
               </a>
-              <a href="#" className="w-10 h-10 flex items-center justify-center bg-[#262626] hover:bg-green-700 transition-all duration-300 rounded-sm">
+              <a href="#" className="w-10 h-10 flex items-center justify-center bg-[#262626] hover:bg-green-700 hover:text-white text-gray-400 transition-all duration-300 rounded-sm">
                 <IconWhatsApp />
               </a>
             </div>
@@ -70,19 +86,18 @@ export default function Footer() {
       </div>
 
       {/* 2. BOTTOM BAR */}
-      <div className="bg-black py-4">
-        {/* Lebar disesuaikan ke max-w-6xl */}
-        <div className="container mx-auto px-4 max-w-6xl flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-[10px] text-gray-500 font-medium">
-            © {currentYear} HERBANOS.ID - ALL RIGHTS RESERVED
+      <div className="bg-black py-6 border-t border-white/5">
+        <div className="container mx-auto px-4 max-w-6xl flex flex-col md:flex-row justify-between items-center gap-6">
+          <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
+            © {currentYear} herbanos.id - All Rights Reserved
           </p>
           
-          <nav className="flex flex-wrap justify-center gap-6 text-[10px] font-bold uppercase tracking-widest text-gray-400">
-            <a href="/" className="hover:text-green-500 transition-colors">Home</a>
-            <a href="/kontak" className="hover:text-green-500 transition-colors">Kontak</a>
-            <a href="/privacy-policy" className="hover:text-green-500 transition-colors">Privacy Policy</a>
-            <a href="/produk" className="hover:text-green-500 transition-colors">Produk Utama</a>
-            <a href="/berita-islam" className="hover:text-green-500 transition-colors">Berita Islam Terkini</a>
+          <nav className="flex flex-wrap justify-center gap-6 text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">
+            <Link href="/" className="hover:text-green-500 transition-colors">Home</Link>
+            <Link href="/kontak" className="hover:text-green-500 transition-colors">Kontak</Link>
+            <Link href="/privacy-policy" className="hover:text-green-500 transition-colors">Privacy Policy</Link>
+            <Link href="/produk" className="hover:text-green-500 transition-colors">Produk Utama</Link>
+            <Link href="https://onislam.web.id" className="hover:text-green-500 transition-colors">Berita Islam</Link>
           </nav>
         </div>
       </div>

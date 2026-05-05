@@ -1,0 +1,614 @@
+[
+  {
+    "id": 45,
+    "name": "Product Knowledge",
+    "slug": "product-knowledge",
+    "description": "Kategori mengenai pengetahuan produk herbanos."
+  },
+  {
+    "id": 46,
+    "name": "Tips and Tricks",
+    "slug": "tips-and-tricks",
+    "description": "Kategori mengenai tips dan informasi kesehatan herbal."
+  },
+  {
+    "id": 127,
+    "name": "1w",
+    "slug": "1w",
+    "description": ""
+  },
+  {
+    "id": 129,
+    "name": "1Win AZ Casino",
+    "slug": "1win-az-casino",
+    "description": ""
+  },
+  {
+    "id": 70,
+    "name": "1win Brazil",
+    "slug": "1win-brazil",
+    "description": ""
+  },
+  {
+    "id": 167,
+    "name": "1win casino spanish",
+    "slug": "1win-casino-spanish",
+    "description": ""
+  },
+  {
+    "id": 162,
+    "name": "1win fr",
+    "slug": "1win-fr",
+    "description": ""
+  },
+  {
+    "id": 66,
+    "name": "1win India",
+    "slug": "1win-india",
+    "description": ""
+  },
+  {
+    "id": 53,
+    "name": "1WIN Official In Russia",
+    "slug": "1win-official-in-russia",
+    "description": ""
+  },
+  {
+    "id": 56,
+    "name": "1win Turkiye",
+    "slug": "1win-turkiye",
+    "description": ""
+  },
+  {
+    "id": 57,
+    "name": "1win uzbekistan",
+    "slug": "1win-uzbekistan",
+    "description": ""
+  },
+  {
+    "id": 74,
+    "name": "1winRussia",
+    "slug": "1winrussia",
+    "description": ""
+  },
+  {
+    "id": 122,
+    "name": "1xbet",
+    "slug": "1xbet",
+    "description": ""
+  },
+  {
+    "id": 172,
+    "name": "1xbet arabic",
+    "slug": "1xbet-arabic",
+    "description": ""
+  },
+  {
+    "id": 58,
+    "name": "1xbet casino BD",
+    "slug": "1xbet-casino-bd",
+    "description": ""
+  },
+  {
+    "id": 147,
+    "name": "1xbet india",
+    "slug": "1xbet-india",
+    "description": ""
+  },
+  {
+    "id": 93,
+    "name": "1xbet Korea",
+    "slug": "1xbet-korea",
+    "description": ""
+  },
+  {
+    "id": 132,
+    "name": "1xbet KR",
+    "slug": "1xbet-kr",
+    "description": ""
+  },
+  {
+    "id": 99,
+    "name": "1xbet malaysia",
+    "slug": "1xbet-malaysia",
+    "description": ""
+  },
+  {
+    "id": 128,
+    "name": "1xbet Morocco",
+    "slug": "1xbet-morocco",
+    "description": ""
+  },
+  {
+    "id": 130,
+    "name": "1xbet russian1",
+    "slug": "1xbet-russian1",
+    "description": ""
+  },
+  {
+    "id": 79,
+    "name": "22bet",
+    "slug": "22bet",
+    "description": ""
+  },
+  {
+    "id": 112,
+    "name": "22Bet BD",
+    "slug": "22bet-bd",
+    "description": ""
+  },
+  {
+    "id": 98,
+    "name": "22bet IT",
+    "slug": "22bet-it",
+    "description": ""
+  },
+  {
+    "id": 75,
+    "name": "888starz bd",
+    "slug": "888starz-bd",
+    "description": ""
+  },
+  {
+    "id": 33,
+    "name": "Artikel",
+    "slug": "artikel",
+    "description": ""
+  },
+  {
+    "id": 164,
+    "name": "austria",
+    "slug": "austria",
+    "description": ""
+  },
+  {
+    "id": 67,
+    "name": "Aviator",
+    "slug": "aviator",
+    "description": ""
+  },
+  {
+    "id": 84,
+    "name": "aviator brazil",
+    "slug": "aviator-brazil",
+    "description": ""
+  },
+  {
+    "id": 110,
+    "name": "aviator casino DE",
+    "slug": "aviator-casino-de",
+    "description": ""
+  },
+  {
+    "id": 133,
+    "name": "aviator casino fr",
+    "slug": "aviator-casino-fr",
+    "description": ""
+  },
+  {
+    "id": 153,
+    "name": "aviator IN",
+    "slug": "aviator-in",
+    "description": ""
+  },
+  {
+    "id": 107,
+    "name": "aviator ke",
+    "slug": "aviator-ke",
+    "description": ""
+  },
+  {
+    "id": 114,
+    "name": "aviator mz",
+    "slug": "aviator-mz",
+    "description": ""
+  },
+  {
+    "id": 104,
+    "name": "aviator ng",
+    "slug": "aviator-ng",
+    "description": ""
+  },
+  {
+    "id": 88,
+    "name": "b1bet BR",
+    "slug": "b1bet-br",
+    "description": ""
+  },
+  {
+    "id": 90,
+    "name": "Bankobet",
+    "slug": "bankobet",
+    "description": ""
+  },
+  {
+    "id": 91,
+    "name": "Basaribet",
+    "slug": "basaribet",
+    "description": ""
+  },
+  {
+    "id": 108,
+    "name": "bbrbet colombia",
+    "slug": "bbrbet-colombia",
+    "description": ""
+  },
+  {
+    "id": 97,
+    "name": "bbrbet mx",
+    "slug": "bbrbet-mx",
+    "description": ""
+  },
+  {
+    "id": 137,
+    "name": "biznisakademija.hr",
+    "slug": "biznisakademija-hr",
+    "description": ""
+  },
+  {
+    "id": 106,
+    "name": "bizzo casino",
+    "slug": "bizzo-casino",
+    "description": ""
+  },
+  {
+    "id": 94,
+    "name": "Blog",
+    "slug": "blog",
+    "description": ""
+  },
+  {
+    "id": 76,
+    "name": "book of ra",
+    "slug": "book-of-ra",
+    "description": ""
+  },
+  {
+    "id": 134,
+    "name": "book of ra it",
+    "slug": "book-of-ra-it",
+    "description": ""
+  },
+  {
+    "id": 146,
+    "name": "Brand",
+    "slug": "brand",
+    "description": ""
+  },
+  {
+    "id": 89,
+    "name": "casibom tr",
+    "slug": "casibom-tr",
+    "description": ""
+  },
+  {
+    "id": 159,
+    "name": "casibom-tg",
+    "slug": "casibom-tg",
+    "description": ""
+  },
+  {
+    "id": 59,
+    "name": "casino",
+    "slug": "casino",
+    "description": ""
+  },
+  {
+    "id": 65,
+    "name": "casino en ligne fr",
+    "slug": "casino-en-ligne-fr",
+    "description": ""
+  },
+  {
+    "id": 54,
+    "name": "casino onlina ca",
+    "slug": "casino-onlina-ca",
+    "description": ""
+  },
+  {
+    "id": 61,
+    "name": "casino online ar",
+    "slug": "casino-online-ar",
+    "description": ""
+  },
+  {
+    "id": 69,
+    "name": "casinò online it",
+    "slug": "casino-online-it",
+    "description": ""
+  },
+  {
+    "id": 121,
+    "name": "casino svensk licens",
+    "slug": "casino-svensk-licens",
+    "description": ""
+  },
+  {
+    "id": 87,
+    "name": "casino zonder crucks netherlands",
+    "slug": "casino-zonder-crucks-netherlands",
+    "description": ""
+  },
+  {
+    "id": 173,
+    "name": "casino-glory india",
+    "slug": "casino-glory-india",
+    "description": ""
+  },
+  {
+    "id": 80,
+    "name": "crazy time",
+    "slug": "crazy-time",
+    "description": ""
+  },
+  {
+    "id": 160,
+    "name": "csdino",
+    "slug": "csdino",
+    "description": ""
+  },
+  {
+    "id": 139,
+    "name": "czbrandss",
+    "slug": "czbrandss",
+    "description": ""
+  },
+  {
+    "id": 145,
+    "name": "digtory.se",
+    "slug": "digtory-se",
+    "description": ""
+  },
+  {
+    "id": 155,
+    "name": "dileva.org",
+    "slug": "dileva-org",
+    "description": ""
+  },
+  {
+    "id": 50,
+    "name": "Fairspin-casino",
+    "slug": "fairspin-casino",
+    "description": ""
+  },
+  {
+    "id": 34,
+    "name": "Featured",
+    "slug": "featured",
+    "description": "Featured posts"
+  },
+  {
+    "id": 119,
+    "name": "fortune tiger brazil",
+    "slug": "fortune-tiger-brazil",
+    "description": ""
+  },
+  {
+    "id": 77,
+    "name": "Gama Casino",
+    "slug": "gama-casino",
+    "description": ""
+  },
+  {
+    "id": 135,
+    "name": "Game",
+    "slug": "game",
+    "description": ""
+  },
+  {
+    "id": 144,
+    "name": "gerbera.cc",
+    "slug": "gerbera-cc",
+    "description": ""
+  },
+  {
+    "id": 101,
+    "name": "glory-casinos tr",
+    "slug": "glory-casinos-tr",
+    "description": ""
+  },
+  {
+    "id": 52,
+    "name": "Kasyno Online PL",
+    "slug": "kasyno-online-pl",
+    "description": ""
+  },
+  {
+    "id": 136,
+    "name": "keepaneye.mk",
+    "slug": "keepaneye-mk",
+    "description": ""
+  },
+  {
+    "id": 83,
+    "name": "king johnnie",
+    "slug": "king-johnnie",
+    "description": ""
+  },
+  {
+    "id": 154,
+    "name": "kronotoptext.se",
+    "slug": "kronotoptext-se",
+    "description": ""
+  },
+  {
+    "id": 143,
+    "name": "linasrodloga.se",
+    "slug": "linasrodloga-se",
+    "description": ""
+  },
+  {
+    "id": 92,
+    "name": "Maribet casino TR",
+    "slug": "maribet-casino-tr",
+    "description": ""
+  },
+  {
+    "id": 82,
+    "name": "Masalbet",
+    "slug": "masalbet",
+    "description": ""
+  },
+  {
+    "id": 163,
+    "name": "mini-review",
+    "slug": "mini-review",
+    "description": ""
+  },
+  {
+    "id": 123,
+    "name": "Mini-reviews",
+    "slug": "mini-reviews",
+    "description": ""
+  },
+  {
+    "id": 166,
+    "name": "mombrand",
+    "slug": "mombrand",
+    "description": ""
+  },
+  {
+    "id": 149,
+    "name": "mono brand",
+    "slug": "mono-brand",
+    "description": ""
+  },
+  {
+    "id": 158,
+    "name": "mono slot",
+    "slug": "mono-slot",
+    "description": ""
+  },
+  {
+    "id": 64,
+    "name": "Monobrand",
+    "slug": "monobrand",
+    "description": ""
+  },
+  {
+    "id": 169,
+    "name": "monobrend",
+    "slug": "monobrend",
+    "description": ""
+  },
+  {
+    "id": 171,
+    "name": "monogame",
+    "slug": "monogame",
+    "description": ""
+  },
+  {
+    "id": 124,
+    "name": "monoslot",
+    "slug": "monoslot",
+    "description": ""
+  },
+  {
+    "id": 150,
+    "name": "mostbet",
+    "slug": "mostbet",
+    "description": ""
+  },
+  {
+    "id": 174,
+    "name": "mostbet GR",
+    "slug": "mostbet-gr",
+    "description": ""
+  },
+  {
+    "id": 131,
+    "name": "mostbet hungary",
+    "slug": "mostbet-hungary",
+    "description": ""
+  },
+  {
+    "id": 117,
+    "name": "mostbet italy",
+    "slug": "mostbet-italy",
+    "description": ""
+  },
+  {
+    "id": 161,
+    "name": "mostbet norway",
+    "slug": "mostbet-norway",
+    "description": ""
+  },
+  {
+    "id": 95,
+    "name": "Mostbet Russia",
+    "slug": "mostbet-russia",
+    "description": ""
+  },
+  {
+    "id": 111,
+    "name": "mostbet tr",
+    "slug": "mostbet-tr",
+    "description": ""
+  },
+  {
+    "id": 115,
+    "name": "Mr Bet casino DE",
+    "slug": "mr-bet-casino-de",
+    "description": ""
+  },
+  {
+    "id": 152,
+    "name": "mr jack bet brazil",
+    "slug": "mr-jack-bet-brazil",
+    "description": ""
+  },
+  {
+    "id": 118,
+    "name": "mx-bbrbet-casino",
+    "slug": "mx-bbrbet-casino",
+    "description": ""
+  },
+  {
+    "id": 55,
+    "name": "online casino au",
+    "slug": "online-casino-au",
+    "description": ""
+  },
+  {
+    "id": 100,
+    "name": "onlone casino ES",
+    "slug": "onlone-casino-es",
+    "description": ""
+  },
+  {
+    "id": 48,
+    "name": "Panduan Bisnis",
+    "slug": "panduan-bisnis",
+    "description": ""
+  },
+  {
+    "id": 157,
+    "name": "pelican casino PL",
+    "slug": "pelican-casino-pl",
+    "description": ""
+  },
+  {
+    "id": 103,
+    "name": "Pin UP",
+    "slug": "pin-up",
+    "description": ""
+  },
+  {
+    "id": 170,
+    "name": "Pin Up Brazil",
+    "slug": "pin-up-brazil",
+    "description": ""
+  },
+  {
+    "id": 96,
+    "name": "Pin Up Peru",
+    "slug": "pin-up-peru",
+    "description": ""
+  },
+  {
+    "id": 51,
+    "name": "pinco",
+    "slug": "pinco",
+    "description": ""
+  }
+]
