@@ -5,23 +5,27 @@ import { client } from '@/sanity/lib/client';
 import { urlFor } from '@/sanity/lib/image';
 import { PortableText } from '@portabletext/react';
 import { notFound } from 'next/navigation';
-import CommentSection from '@/components/CommentSection'; // Memanggil komponen komentar
+import CommentSection from '@/components/CommentSection';
 
-// --- CUSTOM SVG ICONS ---
-const IconChevronRight = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+// --- FIXED SVG ICONS (Sekarang bisa menerima className) ---
+interface IconProps {
+  className?: string;
+}
+
+const IconChevronRight = ({ className }: IconProps) => (
+  <svg className={className} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
 );
-const IconCalendar = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+const IconCalendar = ({ className }: IconProps) => (
+  <svg className={className} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
 );
-const IconEye = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+const IconEye = ({ className }: IconProps) => (
+  <svg className={className} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
 );
-const IconShare = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+const IconShare = ({ className }: IconProps) => (
+  <svg className={className} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
 );
-const IconLink = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+const IconLink = ({ className }: IconProps) => (
+  <svg className={className} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
 );
 
 // --- SOCIAL SHARE ICONS ---
@@ -46,7 +50,6 @@ const portableTextComponents = {
 export default async function BlogPostDetail({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  // Query GROQ
   const query = `*[_type == "post" && slug.current == $slug][0]{
     title,
     "slug": slug.current,
@@ -86,9 +89,7 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="flex flex-col lg:flex-row gap-10">
           
-          {/* --- MAIN CONTENT --- */}
           <div className="w-full lg:w-2/3">
-            {/* Breadcrumb */}
             <nav className="flex text-[10px] uppercase font-bold tracking-wider text-gray-400 mb-6 items-center">
               <Link href="/" className="hover:text-green-600">Beranda</Link>
               <span className="mx-2 text-gray-300"><IconChevronRight /></span>
@@ -105,21 +106,19 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
               {post.title}
             </h1>
 
-            {/* Meta Info */}
             <div className="flex flex-wrap items-center text-[11px] font-bold tracking-wide text-gray-500 gap-4 mb-4">
               <span className="text-gray-900">Penulis <strong>{post.author?.name || 'Admin'}</strong></span>
               <span>-</span>
               <span>{new Date(post.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
               <div className="ml-auto flex gap-4">
-                 <div className="flex items-center gap-1.5"><IconEye /> {post.views || 0}</div>
-                 <div className="flex items-center gap-1.5">
-                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                   0
-                 </div>
+                  <div className="flex items-center gap-1.5"><IconEye /> {post.views || 0}</div>
+                  <div className="flex items-center gap-1.5">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    0
+                  </div>
               </div>
             </div>
 
-            {/* --- SHARE BUTTONS ATAS --- */}
             <div className="flex flex-wrap gap-2 mb-8">
               <a href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 bg-[#3b5998] text-white px-3 py-1.5 text-xs rounded-sm hover:opacity-90 transition-opacity">
                 <IconFacebook /> Facebook
@@ -138,7 +137,6 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
               </a>
             </div>
 
-            {/* Featured Image */}
             {post.mainImage && (
               <div className="mb-8 relative w-full h-[300px] md:h-[480px] overflow-hidden rounded-sm shadow-sm">
                 <Image 
@@ -151,7 +149,6 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
               </div>
             )}
 
-            {/* Content Body */}
             <div className="prose prose-green max-w-none mb-12 border-b border-gray-100 pb-12">
               {post.content ? (
                 <PortableText value={post.content} components={portableTextComponents} />
@@ -160,11 +157,11 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
               )}
             </div>
 
-            {/* --- SHARE BUTTONS BAWAH --- */}
+            {/* --- SHARE BUTTONS BAWAH (FIXED) --- */}
             <div className="flex flex-wrap items-center gap-0 mb-10">
               <div className="flex items-center border border-gray-200 py-1.5 px-3 mr-3 text-sm font-bold shadow-sm relative">
-                 <IconShare className="mr-2" /> Bagikan
-                 <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-t border-r border-gray-200 rotate-45"></div>
+                  <IconShare className="mr-2" /> Bagikan
+                  <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-t border-r border-gray-200 rotate-45"></div>
               </div>
               <a href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`} className="bg-[#3b5998] text-white w-9 h-9 flex items-center justify-center hover:opacity-90"><IconFacebook /></a>
               <a href={`https://twitter.com/intent/tweet?url=${shareUrl}&text=${post.title}`} className="bg-black text-white w-9 h-9 flex items-center justify-center hover:opacity-90"><IconX /></a>
@@ -174,7 +171,6 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
               <button className="bg-black text-white w-9 h-9 flex items-center justify-center hover:opacity-90"><IconLink /></button>
             </div>
 
-            {/* --- NAVIGASI NEXT/PREV ARTICLE --- */}
             <div className="flex flex-col md:flex-row justify-between border-t border-b border-gray-100 py-6 mb-10 gap-6">
               <div className="w-full md:w-1/2">
                 {post.prevPost && (
@@ -194,7 +190,6 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
               </div>
             </div>
 
-            {/* --- AUTHOR BOX --- */}
             <div className="border border-gray-100 p-6 flex gap-6 items-center mb-12">
               <div className="w-24 h-24 bg-gray-200 shrink-0 relative overflow-hidden rounded-sm">
                 {post.author?.avatar ? (
@@ -211,7 +206,6 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
               </div>
             </div>
 
-            {/* --- ARTIKEL TERKAIT --- */}
             {post.related && post.related.length > 0 && (
               <div className="mb-12">
                 <div className="border-b-2 border-green-700 mb-6 flex">
@@ -234,14 +228,11 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
               </div>
             )}
 
-            {/* --- KOMENTAR --- */}
             <CommentSection />
 
           </div>
 
-          {/* --- SIDEBAR --- */}
           <aside className="w-full lg:w-1/3 space-y-10">
-            {/* Banner Produk */}
             <div className="bg-blue-900 text-white aspect-[3/4] flex flex-col items-center justify-center p-8 rounded-sm text-center relative overflow-hidden group shadow-md">
                 <div className="absolute inset-0 bg-black opacity-20 group-hover:opacity-10 transition-opacity"></div>
                 <div className="z-10">
@@ -252,7 +243,6 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
                 </div>
             </div>
 
-            {/* Popular Posts */}
             {post.popular && post.popular.length > 0 && (
               <div className="space-y-6">
                 <div className="border-b-2 border-green-700 mb-6 flex">
