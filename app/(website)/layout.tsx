@@ -1,12 +1,9 @@
+// app/(website)/layout.tsx
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-const inter = Inter({ subsets: ["latin"] });
-
-// --- KONFIGURASI SEO & MEDIA SOSIAL ---
+// --- KONFIGURASI SEO & MEDIA SOSIAL TAK TERTANDINGI ---
 export const metadata: Metadata = {
   title: {
     default: "Herbanos - Solusi Kesehatan Alami & Herbal Premium",
@@ -14,13 +11,12 @@ export const metadata: Metadata = {
   },
   description: "Temukan berbagai solusi kesehatan alami terpercaya dengan produk herbal berkualitas tinggi hanya di Herbanos. Alami, Aman, dan Berkhasiat.",
   keywords: ["herbal", "kesehatan alami", "obat tradisional", "suplemen herbal", "herbanos Indonesia"],
-  authors: [{ name: "Herbanos Team" }],
-  metadataBase: new URL("https://herbanos.id"), // Ganti dengan domain asli Anda
+  metadataBase: new URL("https://herbanos.id"),
   alternates: {
     canonical: "/",
   },
   
-  // --- OPEN GRAPH (Facebook, WhatsApp, LinkedIn) ---
+  // OPEN GRAPH (Muncul di WhatsApp/FB)
   openGraph: {
     title: "Herbanos - Solusi Kesehatan Alami",
     description: "Solusi terbaik untuk kesehatan Anda dengan ramuan herbal pilihan.",
@@ -28,7 +24,7 @@ export const metadata: Metadata = {
     siteName: "Herbanos",
     images: [
       {
-        url: "/og-image.jpg", // Pastikan file ini ada di folder public (ukuran ideal 1200x630)
+        url: "/og-image.jpg", // Taruh file og-image.jpg di folder public
         width: 1200,
         height: 630,
         alt: "Herbanos Promo Banner",
@@ -38,15 +34,15 @@ export const metadata: Metadata = {
     type: "website",
   },
 
-  // --- TWITTER CARD (Muncul Gambar Besar) ---
+  // TWITTER CARD (Gambar Besar)
   twitter: {
-    card: "summary_large_image", // Ini kuncinya agar gambar muncul besar
+    card: "summary_large_image", 
     title: "Herbanos - Solusi Kesehatan Alami",
     description: "Ramuan herbal premium untuk gaya hidup sehat.",
-    images: ["/og-image.jpg"], // Gambar yang sama dengan OG
+    images: ["/og-image.jpg"],
   },
 
-  // --- ICONS (Hasil Download tadi) ---
+  // FAVICON & ICONS (Sesuai file image_f2ef9d.png Anda)
   icons: {
     icon: [
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
@@ -64,23 +60,18 @@ export const metadata: Metadata = {
   manifest: "/site.webmanifest",
 };
 
-export default function RootLayout({
+export default function WebsiteLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id">
-      <body className={inter.className}>
-        <div className="flex flex-col min-h-screen">
-          <Header />
-          {/* pt-20 disesuaikan dengan tinggi header agar konten tidak tertutup */}
-          <main className="flex-grow pt-20">
-            {children}
-          </main>
-          <Footer />
-        </div>
-      </body>
-    </html>
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      <main className="flex-grow pt-20">
+        {children}
+      </main>
+      <Footer />
+    </div>
   );
 }
