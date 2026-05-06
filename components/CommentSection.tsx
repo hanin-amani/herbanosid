@@ -66,11 +66,12 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
   };
 
   const handleLogin = async (provider: 'google' | 'github') => {
-    const currentPath = window.location.pathname;
+    // FIX: Tambahkan anchor #comments agar browser otomatis scroll ke bawah setelah login
+    const currentPath = window.location.pathname + "#comments";
+    
     await supabase.auth.signInWithOAuth({
       provider,
       options: { 
-        // Mengarahkan ke terminal callback sambil membawa URL artikel
         redirectTo: `${window.location.origin}/auth/callback?next=${currentPath}` 
       }
     });
@@ -108,7 +109,8 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
   };
 
   return (
-    <div className="mt-16 pt-10 border-t border-gray-100">
+    // FIX: Tambahkan id="comments" sebagai target anchor scroll
+    <div id="comments" className="mt-16 pt-10 border-t border-gray-100">
       
       <div className="flex items-center gap-3 mb-8">
         <h3 className="text-xl font-black text-gray-900 tracking-tight">Diskusi & Komentar</h3>
