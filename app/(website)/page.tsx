@@ -29,9 +29,8 @@ const LatestPostSection = ({
   totalPages: number 
 }) => {
   
-  // Logika untuk menentukan rentang halaman yang ditampilkan
   const getPageNumbers = () => {
-    const delta = 2; // Jumlah angka di kiri & kanan halaman aktif
+    const delta = 2;
     const range = [];
     for (
       let i = Math.max(2, currentPage - delta);
@@ -40,19 +39,17 @@ const LatestPostSection = ({
     ) {
       range.push(i);
     }
-
     if (currentPage - delta > 2) range.unshift("...");
     range.unshift(1);
     if (currentPage + delta < totalPages - 1) range.push("...");
     if (totalPages > 1) range.push(totalPages);
-
     return range;
   };
 
   return (
     <section className="flex flex-col gap-8">
       <div className="border-b-2 border-green-700 mb-2 flex">
-        <h2 className="bg-green-700 text-white px-4 py-1.5 font-bold text-sm uppercase">Postingan Terbaru</h2>
+        <h2 className="bg-green-700 text-white px-4 py-1.5 font-bold text-sm uppercase tracking-tight">Postingan Terbaru</h2>
       </div>
       
       {posts && posts.map((post) => (
@@ -68,19 +65,22 @@ const LatestPostSection = ({
             )}
           </div>
           <div className="flex-1">
-            <h3 className="text-xl font-bold mb-2 group-hover:text-green-700 transition-colors leading-tight">{post.title}</h3>
+            {/* Judul: TANPA UPPERCASE */}
+            <h3 className="text-xl font-bold mb-2 group-hover:text-green-700 transition-colors leading-tight tracking-tight">
+              {post.title}
+            </h3>
             <div className="flex items-center gap-4 text-[11px] text-gray-400 mb-3 uppercase font-bold tracking-wider">
-              <span>{post.authorName || 'Admin'}</span>
+              <span className="text-green-700/80">{post.authorName || 'Admin'}</span>
               <span>{formatDate(post.publishedAt)}</span>
             </div>
             <p className="text-sm text-gray-500 line-clamp-3 italic leading-relaxed">
-              {post.excerpt || (post.content && post.content[0]?.children?.[0]?.text)}
+              {post.excerpt || "Baca selengkapnya mengenai artikel kesehatan dan solusi alami hanya di herbanos.id."}
             </p>
           </div>
         </Link>
       ))}
 
-      {/* --- SMART PAGINATION UI --- */}
+      {/* --- SMART PAGINATION --- */}
       <div className="flex items-center justify-center gap-2 mt-8 flex-wrap">
         {currentPage > 1 && (
           <Link 
@@ -128,18 +128,25 @@ const LatestPostSection = ({
 const PopularSection = ({ posts }: { posts: any[] }) => (
   <section className="space-y-4">
     <div className="border-b-2 border-green-700 mb-6 flex">
-      <h3 className="bg-green-700 text-white px-4 py-1 font-bold text-xs uppercase">Populer</h3>
+      <h3 className="bg-green-700 text-white px-4 py-1 font-bold text-xs uppercase tracking-tight">Populer Post</h3>
     </div>
     {posts && posts.map((post) => (
-      <Link href={`/${post.slug}`} key={post._id} className="flex gap-3 group cursor-pointer items-center border-b border-gray-50 pb-3 last:border-0">
-        <div className="relative w-16 h-16 shrink-0 rounded overflow-hidden bg-gray-100 border border-gray-100">
+      <Link href={`/${post.slug}`} key={post._id} className="flex gap-4 group cursor-pointer items-center border-b border-gray-50 pb-4 last:border-0">
+        <div className="relative w-16 h-16 shrink-0 rounded-sm overflow-hidden bg-gray-100 border border-gray-100 shadow-sm">
           {post.mainImage && (
-            <Image src={urlFor(post.mainImage).url()} alt={post.title} fill className="object-cover" />
+            <Image src={urlFor(post.mainImage).url()} alt={post.title} fill className="object-cover group-hover:scale-110 transition-transform" />
           )}
         </div>
-        <div>
-          <h4 className="text-xs font-bold leading-tight group-hover:text-green-700 line-clamp-2 transition-colors">{post.title}</h4>
-          <span className="text-[10px] text-gray-400 mt-1 block uppercase font-medium">{formatDate(post.publishedAt)}</span>
+        <div className="flex flex-col justify-center">
+          {/* Judul Sidebar: TANPA UPPERCASE */}
+          <h4 className="text-[13px] font-bold leading-tight group-hover:text-green-700 transition-colors line-clamp-2 tracking-tight mb-1">
+            {post.title}
+          </h4>
+          <div className="flex items-center gap-2 text-[9px] text-gray-400 font-bold uppercase">
+             <span className="text-green-700/60">{post.authorName}</span>
+             <span>•</span>
+             <span>{new Date(post.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</span>
+          </div>
         </div>
       </Link>
     ))}
@@ -156,45 +163,56 @@ export default async function HomePage({
   const postsPerPage = 5;
   const currentPage = Number(resolvedParams.page) || 1;
 
-  // Offset awal untuk LatestPost adalah 5 (karena 5 pertama dipakai FeaturedGrid)
   const startIdx = 5 + (currentPage - 1) * postsPerPage;
   const endIdx = startIdx + postsPerPage;
 
+  // QUERY UPDATE: Mengambil slug berita & data iklan sidebar/header
   const query = `{
-    "tickerItems": *[_type == "post"] | order(publishedAt desc)[0...5].title,
+    "tickerItems": *[_type == "post"] | order(publishedAt desc)[0...5]{
+       title, "slug": slug.current
+    },
     "featuredPosts": *[_type == "post"] | order(publishedAt desc)[0...5]{
       _id, title, "slug": slug.current, mainImage, publishedAt, "category": categories[0]->title
     },
     "latestPosts": *[_type == "post"] | order(publishedAt desc)[${startIdx}...${endIdx}]{
-      _id, title, "slug": slug.current, mainImage, publishedAt, excerpt, content, "authorName": author->name
+      _id, title, "slug": slug.current, mainImage, publishedAt, excerpt, "authorName": author->name
     },
     "popularPosts": *[_type == "post"] | order(views desc)[0...5]{
-      _id, title, "slug": slug.current, mainImage, publishedAt
+      _id, title, "slug": slug.current, mainImage, publishedAt, "authorName": author->name
     },
+    "adSidebar": *[_type == "ads" && position == "sidebar" && isActive == true][0]{ destinationUrl, bannerImage },
+    "adHeader": *[_type == "ads" && position == "header" && isActive == true][0]{ destinationUrl, bannerImage },
     "totalPosts": count(*[_type == "post"])
   }`;
 
   const data = await client.fetch(query, {}, { next: { revalidate: 60 } });
 
-  // Total halaman berdasarkan sisa post setelah Featured
   const totalLatestPosts = Math.max(0, data.totalPosts - 5);
   const totalPages = Math.ceil(totalLatestPosts / postsPerPage);
 
   return (
-    <main className="bg-white pt-[30px] md:pt-[45px] transition-all duration-300">
-      <NewsTicker 
-        items={data.tickerItems && data.tickerItems.length > 0 
-          ? data.tickerItems 
-          : ["Memuat berita terbaru..."]} 
-      />
+    <main className="bg-white pt-[30px] md:pt-[45px]">
+      
+      {/* NewsTicker dengan Link Aktif */}
+      <NewsTicker items={data.tickerItems || []} />
       
       <div className="container mx-auto px-4 py-8 max-w-6xl">
-        {/* FeaturedGrid (Selalu tampil di halaman manapun agar header tetap konsisten) */}
+        
+        {/* Iklan Header (Jika ada) */}
+        {data.adHeader?.bannerImage && (
+          <div className="mb-10 flex justify-center">
+            <a href={data.adHeader.destinationUrl} target="_blank" rel="nofollow">
+              <div className="relative w-full max-w-[970px] aspect-[16/2] md:aspect-[8/1] overflow-hidden rounded-sm shadow-sm border border-gray-100 bg-gray-50">
+                <Image src={urlFor(data.adHeader.bannerImage).url()} alt="Iklan Header" fill className="object-contain" />
+              </div>
+            </a>
+          </div>
+        )}
+
         <FeaturedGrid posts={data.featuredPosts || []} />
         
-        <div className="flex flex-col lg:flex-row gap-10 mt-10">
-          <div className="w-full lg:w-2/3 space-y-12">
-            {/* Hanya tampilkan HybridSection di Halaman 1 agar user tidak jenuh */}
+        <div className="flex flex-col lg:flex-row gap-10 mt-12">
+          <div className="w-full lg:w-2/3 space-y-16">
             {currentPage === 1 && (
               <>
                 <HybridSection title="Artikel Kesehatan" categorySlug="kesehatan" />
@@ -209,9 +227,21 @@ export default async function HomePage({
             />
           </div>
           
-          <aside className="w-full lg:w-1/3 space-y-10">
+          <aside className="w-full lg:w-1/3 space-y-12">
             <SocialWidget />
-            <AdsWidget label="IKLAN SPONSOR" />
+
+            {/* DYNAMIC SIDEBAR AD */}
+            {data.adSidebar?.bannerImage && (
+              <div className="sticky top-24">
+                <a href={data.adSidebar.destinationUrl} target="_blank" rel="nofollow" className="block group">
+                  <div className="relative w-full aspect-[4/5] overflow-hidden rounded-sm border border-gray-100 shadow-md">
+                    <Image src={urlFor(data.adSidebar.bannerImage).url()} alt="Iklan Sidebar" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  </div>
+                  <p className="text-[9px] text-gray-300 uppercase tracking-widest mt-3 text-center italic font-bold">Informasi Sponsor</p>
+                </a>
+              </div>
+            )}
+
             <PopularSection posts={data.popularPosts || []} />
           </aside>
         </div>
