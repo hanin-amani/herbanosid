@@ -36,15 +36,30 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
   const [loading, setLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
 
+  // 1. Sinkronisasi Auth & Ambil Data
   useEffect(() => {
     fetchComments();
-    checkUser();
-  }, [postSlug]);
 
-  const checkUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) setCurrentUser(user);
-  };
+    // Cek session saat pertama kali mount
+    const getInitialSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) setCurrentUser(session.user);
+    };
+    getInitialSession();
+
+    // FIX UTAMA: Listener untuk perubahan status auth (penting untuk redirect login)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        setCurrentUser(session.user);
+      } else {
+        setCurrentUser(null);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [postSlug]);
 
   const fetchComments = async () => {
     const { data } = await supabase
@@ -55,12 +70,11 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
     if (data) setComments(data);
   };
 
-  // --- LOGIKA LOGIN DENGAN REDIRECT KE HALAMAN ARTIKEL ---
   const handleLogin = async (provider: 'google' | 'github') => {
     await supabase.auth.signInWithOAuth({
       provider,
       options: { 
-        // FIX: Redirect balik ke URL artikel asli, bukan homepage
+        // Redirect balik ke URL artikel spesifik
         redirectTo: window.location.origin + window.location.pathname 
       }
     });
@@ -100,7 +114,7 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
   return (
     <div className="mt-16 pt-10 border-t border-gray-100">
       
-      {/* HEADER: Sentence case, warna dikunci */}
+      {/* HEADER */}
       <div className="flex items-center gap-3 mb-8">
         <h3 className="text-xl font-black text-gray-900 tracking-tight">Diskusi & Komentar</h3>
         <span className="bg-green-100 text-green-800 text-xs font-bold px-2.5 py-0.5 rounded-full">{comments.length}</span>
@@ -180,7 +194,6 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
       {/* DAFTAR KOMENTAR */}
       <div className="space-y-8">
         {comments.length === 0 ? (
-           // FIX: Menghapus class 'italic' agar pesan tidak miring
            <p className="text-gray-400 text-sm text-center py-12 bg-gray-50 rounded-lg border border-dashed border-gray-200 font-medium">
              Belum ada komentar. Jadilah yang pertama berdiskusi!
            </p>
@@ -188,7 +201,7 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
           comments.map((c) => (
             <div key={c.id} className="flex gap-4 border-b border-gray-50 pb-8 last:border-0">
               <div className="w-10 h-10 shrink-0 bg-green-100 rounded-full flex items-center justify-center text-green-700 border border-green-50 shadow-sm">
-                <span className="font-black text-sm uppercase">{c.author_name.charAt(0)}</span>
+                <span className="font-black text-sm uppercase">{c.author_name ? c.author_name.charAt(0) : '?'}</span>
               </div>
               <div className="flex-1">
                 <div className="flex items-baseline gap-2 mb-2">
@@ -197,7 +210,6 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
                     • {new Date(c.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </span>
                 </div>
-                {/* Cuplikan komentar tetap tegak */}
                 <p className="text-gray-700 text-sm leading-relaxed text-justify">
                   {c.content}
                 </p>
