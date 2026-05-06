@@ -36,7 +36,6 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
   const [loading, setLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
 
-  // 1. Cek User Aktif & Ambil Komentar
   useEffect(() => {
     fetchComments();
     checkUser();
@@ -56,11 +55,14 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
     if (data) setComments(data);
   };
 
-  // 2. Logika Login (Google/GitHub)
+  // --- LOGIKA LOGIN DENGAN REDIRECT KE HALAMAN ARTIKEL ---
   const handleLogin = async (provider: 'google' | 'github') => {
     await supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: window.location.href }
+      options: { 
+        // FIX: Redirect balik ke URL artikel asli, bukan homepage
+        redirectTo: window.location.origin + window.location.pathname 
+      }
     });
   };
 
@@ -69,7 +71,6 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
     setCurrentUser(null);
   };
 
-  // 3. Kirim Komentar
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -99,13 +100,13 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
   return (
     <div className="mt-16 pt-10 border-t border-gray-100">
       
-      {/* HEADER */}
+      {/* HEADER: Sentence case, warna dikunci */}
       <div className="flex items-center gap-3 mb-8">
-        <h3 className="text-xl font-black text-gray-900 uppercase tracking-tighter">Diskusi & Komentar</h3>
+        <h3 className="text-xl font-black text-gray-900 tracking-tight">Diskusi & Komentar</h3>
         <span className="bg-green-100 text-green-800 text-xs font-bold px-2.5 py-0.5 rounded-full">{comments.length}</span>
       </div>
 
-      {/* AREA LOGIN / OAUTH */}
+      {/* AREA LOGIN */}
       {!currentUser ? (
         <div className="mb-10 p-6 bg-gray-50 border border-gray-100 rounded-lg shadow-sm">
           <p className="text-sm text-gray-600 mb-4 font-medium">Masuk lebih cepat untuk bergabung dalam diskusi:</p>
@@ -123,78 +124,83 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
               <IconGithub /> Lanjutkan dengan GitHub
             </button>
           </div>
-          <div className="mt-4 flex items-center">
+          <div className="mt-6 flex items-center">
             <div className="flex-grow border-t border-gray-200"></div>
-            <span className="mx-4 text-xs text-gray-400 font-bold uppercase tracking-widest">Atau Komentar Sebagai Tamu</span>
+            <span className="mx-4 text-[10px] text-gray-400 font-bold uppercase tracking-widest">Atau Komentar Sebagai Tamu</span>
             <div className="flex-grow border-t border-gray-200"></div>
           </div>
         </div>
       ) : (
-        <div className="mb-8 p-4 bg-green-50 border border-green-100 rounded-lg flex justify-between items-center">
+        <div className="mb-8 p-4 bg-green-50 border border-green-100 rounded-lg flex justify-between items-center shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center text-green-800">
+            <div className="w-9 h-9 rounded-full bg-green-200 flex items-center justify-center text-green-800 border border-green-200 overflow-hidden">
                {currentUser.user_metadata?.avatar_url ? (
-                  <img src={currentUser.user_metadata.avatar_url} alt="avatar" className="w-full h-full rounded-full" />
+                  <img src={currentUser.user_metadata.avatar_url} alt="avatar" className="w-full h-full object-cover" />
                ) : <IconUser />}
             </div>
             <div>
               <p className="text-sm font-bold text-gray-900">{currentUser.user_metadata?.full_name}</p>
-              <p className="text-xs text-gray-500">Masuk sebagai User</p>
+              <p className="text-[10px] text-green-700 font-bold uppercase tracking-tighter">Terhubung via {currentUser.app_metadata?.provider}</p>
             </div>
           </div>
-          <button onClick={handleLogout} className="text-xs font-bold text-red-600 hover:underline">Keluar</button>
+          <button onClick={handleLogout} className="text-xs font-bold text-red-600 hover:bg-red-50 px-3 py-1.5 rounded transition-colors">Keluar</button>
         </div>
       )}
 
       {/* FORM INPUT */}
-      <form onSubmit={handleSubmit} className="space-y-4 mb-12 relative">
+      <form onSubmit={handleSubmit} className="space-y-4 mb-16 relative">
         {!currentUser && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input 
               type="text" placeholder="Nama Lengkap*" value={name} onChange={(e) => setName(e.target.value)} 
-              className="w-full border border-gray-200 p-3.5 text-sm bg-gray-50 focus:bg-white focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none rounded-md transition-all" required 
+              className="w-full border border-gray-200 p-3.5 text-sm bg-gray-50 focus:bg-white focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none rounded-md transition-all text-gray-900" required 
             />
             <input 
               type="email" placeholder="Alamat Email*" value={email} onChange={(e) => setEmail(e.target.value)} 
-              className="w-full border border-gray-200 p-3.5 text-sm bg-gray-50 focus:bg-white focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none rounded-md transition-all" required 
+              className="w-full border border-gray-200 p-3.5 text-sm bg-gray-50 focus:bg-white focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none rounded-md transition-all text-gray-900" required 
             />
           </div>
         )}
         <textarea 
           placeholder="Tulis pendapat atau pertanyaan Anda di sini..." 
           rows={4} value={comment} onChange={(e) => setComment(e.target.value)}
-          className="w-full border border-gray-200 p-4 text-sm bg-gray-50 focus:bg-white focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none rounded-md transition-all resize-y" required 
+          className="w-full border border-gray-200 p-4 text-sm bg-gray-50 focus:bg-white focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none rounded-md transition-all resize-y text-gray-900 leading-relaxed" required 
         />
         
         <div className="flex justify-end">
           <button 
             disabled={loading} type="submit" 
-            className={`flex items-center justify-center min-w-[180px] bg-green-700 text-white px-8 py-3.5 text-sm font-bold hover:bg-green-800 transition-colors uppercase tracking-widest rounded-md ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+            className={`flex items-center justify-center min-w-[180px] bg-green-700 text-white px-8 py-3.5 text-sm font-bold hover:bg-green-800 transition-colors uppercase tracking-widest rounded-md shadow-md ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
           >
-            {loading ? (
-              <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-            ) : 'Kirim Komentar'}
+            {loading ? 'Mengirim...' : 'Kirim Komentar'}
           </button>
         </div>
       </form>
 
       {/* DAFTAR KOMENTAR */}
-      <div className="space-y-6">
+      <div className="space-y-8">
         {comments.length === 0 ? (
-           <p className="text-gray-400 text-sm italic text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-200">Belum ada komentar. Jadilah yang pertama berdiskusi!</p>
+           // FIX: Menghapus class 'italic' agar pesan tidak miring
+           <p className="text-gray-400 text-sm text-center py-12 bg-gray-50 rounded-lg border border-dashed border-gray-200 font-medium">
+             Belum ada komentar. Jadilah yang pertama berdiskusi!
+           </p>
         ) : (
           comments.map((c) => (
-            <div key={c.id} className="flex gap-4 border-b border-gray-100 pb-6 last:border-0">
-              <div className="w-10 h-10 shrink-0 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
-                {/* Fallback inisial nama jika tidak ada avatar */}
-                <span className="font-bold text-sm uppercase">{c.author_name.charAt(0)}</span>
+            <div key={c.id} className="flex gap-4 border-b border-gray-50 pb-8 last:border-0">
+              <div className="w-10 h-10 shrink-0 bg-green-100 rounded-full flex items-center justify-center text-green-700 border border-green-50 shadow-sm">
+                <span className="font-black text-sm uppercase">{c.author_name.charAt(0)}</span>
               </div>
               <div className="flex-1">
-                <div className="flex items-baseline gap-2 mb-1">
+                <div className="flex items-baseline gap-2 mb-2">
                   <h4 className="font-bold text-gray-900 text-sm capitalize">{c.author_name}</h4>
-                  <span className="text-[10px] text-gray-400 font-medium">• {new Date(c.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">
+                    • {new Date(c.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </span>
                 </div>
-                <p className="text-gray-700 text-sm leading-relaxed">{c.content}</p>
+                {/* Cuplikan komentar tetap tegak */}
+                <p className="text-gray-700 text-sm leading-relaxed text-justify">
+                  {c.content}
+                </p>
               </div>
             </div>
           ))
