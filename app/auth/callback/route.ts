@@ -1,18 +1,44 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
-  const requestUrl = new URL(request.url)
-  const code = requestUrl.searchParams.get('code')
-  // Ambil alamat asal supaya bisa balik ke artikel tadi
-  const next = requestUrl.searchParams.get('next') ?? '/'
+  const { searchParams, origin } = new URL(request.url)
+  const code = searchParams.get('code')
+  // Alamat artikel asal (next)
+  const next = searchParams.get('next') ?? '/'
 
   if (code) {
-    const supabase = createRouteHandlerClient({ cookies })
-    await supabase.auth.exchangeCodeForSession(code)
+    const cookieStore = await cookies()
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return cookieStore.getAll()
+          },
+          setAll(cookiesToSet) {
+            try {
+              cookiesToSet.forEach(({ name, value, options }) =>
+                cookieStore.set(name, value, options)
+              )
+            } catch {
+              // Diabaikan jika dipanggil dari Server Component
+            }
+          },
+        },
+      }
+    )
+
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    
+    if (!error) {
+      // Sukses! Balikkan ke artikel asal
+      return NextResponse.redirect(`${origin}${next}`)
+    }
   }
 
-  // Balikkan user ke artikel asal, bukan ke homepage lagi
-  return NextResponse.redirect(new URL(next, request.url))
+  // Jika error, lempar ke halaman error atau home
+  return NextResponse.redirect(`${origin}/auth/auth-code-error`)
 }
