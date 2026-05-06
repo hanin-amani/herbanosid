@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
+// FIX: Menggunakan createBrowserClient agar sinkron dengan SSR/Cookies
+import { createBrowserClient } from '@supabase/ssr';
 
-const supabase = createClient(
+const supabase = createBrowserClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
@@ -15,12 +16,6 @@ const IconGoogle = () => (
     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-  </svg>
-);
-
-const IconGithub = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
   </svg>
 );
 
@@ -40,15 +35,15 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
   useEffect(() => {
     fetchComments();
 
-    // Cek session saat pertama kali mount
-    const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) setCurrentUser(session.user);
+    // Ambil session saat ini dari browser client
+    const getInitialUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) setCurrentUser(user);
     };
-    getInitialSession();
+    getInitialUser();
 
-    // FIX UTAMA: Listener untuk perubahan status auth (penting untuk redirect login)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    // LISTENER: Penting agar UI langsung berubah saat balik dari Google/Github
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
         setCurrentUser(session.user);
       } else {
@@ -71,11 +66,13 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
   };
 
   const handleLogin = async (provider: 'google' | 'github') => {
+    const currentPath = window.location.pathname;
+    
     await supabase.auth.signInWithOAuth({
       provider,
       options: { 
-        // Redirect balik ke URL artikel spesifik
-        redirectTo: window.location.origin + window.location.pathname 
+        // FIX: Arahkan ke route callback agar menukar 'code' menjadi 'session'
+        redirectTo: `${window.location.origin}/auth/callback?next=${currentPath}` 
       }
     });
   };
@@ -131,14 +128,8 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
             >
               <IconGoogle /> Lanjutkan dengan Google
             </button>
-            <button 
-              onClick={() => handleLogin('github')} 
-              className="flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-2.5 bg-[#24292F] text-white text-sm font-bold hover:bg-[#1b1f23] transition-all rounded-md shadow-sm"
-            >
-              <IconGithub /> Lanjutkan dengan GitHub
-            </button>
           </div>
-          <div className="mt-6 flex items-center">
+          <div className="mt-8 flex items-center">
             <div className="flex-grow border-t border-gray-200"></div>
             <span className="mx-4 text-[10px] text-gray-400 font-bold uppercase tracking-widest">Atau Komentar Sebagai Tamu</span>
             <div className="flex-grow border-t border-gray-200"></div>
@@ -147,14 +138,14 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
       ) : (
         <div className="mb-8 p-4 bg-green-50 border border-green-100 rounded-lg flex justify-between items-center shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-green-200 flex items-center justify-center text-green-800 border border-green-200 overflow-hidden">
+            <div className="w-10 h-10 rounded-full bg-green-200 flex items-center justify-center text-green-800 border border-green-200 overflow-hidden shadow-inner">
                {currentUser.user_metadata?.avatar_url ? (
                   <img src={currentUser.user_metadata.avatar_url} alt="avatar" className="w-full h-full object-cover" />
                ) : <IconUser />}
             </div>
             <div>
-              <p className="text-sm font-bold text-gray-900">{currentUser.user_metadata?.full_name}</p>
-              <p className="text-[10px] text-green-700 font-bold uppercase tracking-tighter">Terhubung via {currentUser.app_metadata?.provider}</p>
+              <p className="text-sm font-bold text-gray-900 leading-none mb-1">{currentUser.user_metadata?.full_name}</p>
+              <p className="text-[10px] text-green-700 font-bold uppercase tracking-tighter">Login via {currentUser.app_metadata?.provider}</p>
             </div>
           </div>
           <button onClick={handleLogout} className="text-xs font-bold text-red-600 hover:bg-red-50 px-3 py-1.5 rounded transition-colors">Keluar</button>
@@ -167,24 +158,24 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input 
               type="text" placeholder="Nama Lengkap*" value={name} onChange={(e) => setName(e.target.value)} 
-              className="w-full border border-gray-200 p-3.5 text-sm bg-gray-50 focus:bg-white focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none rounded-md transition-all text-gray-900" required 
+              className="w-full border border-gray-200 p-3.5 text-sm bg-gray-50 focus:bg-white focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none rounded-md transition-all text-gray-900 shadow-sm" required 
             />
             <input 
               type="email" placeholder="Alamat Email*" value={email} onChange={(e) => setEmail(e.target.value)} 
-              className="w-full border border-gray-200 p-3.5 text-sm bg-gray-50 focus:bg-white focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none rounded-md transition-all text-gray-900" required 
+              className="w-full border border-gray-200 p-3.5 text-sm bg-gray-50 focus:bg-white focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none rounded-md transition-all text-gray-900 shadow-sm" required 
             />
           </div>
         )}
         <textarea 
           placeholder="Tulis pendapat atau pertanyaan Anda di sini..." 
           rows={4} value={comment} onChange={(e) => setComment(e.target.value)}
-          className="w-full border border-gray-200 p-4 text-sm bg-gray-50 focus:bg-white focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none rounded-md transition-all resize-y text-gray-900 leading-relaxed" required 
+          className="w-full border border-gray-200 p-4 text-sm bg-gray-50 focus:bg-white focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none rounded-md transition-all resize-y text-gray-900 leading-relaxed shadow-sm" required 
         />
         
         <div className="flex justify-end">
           <button 
             disabled={loading} type="submit" 
-            className={`flex items-center justify-center min-w-[180px] bg-green-700 text-white px-8 py-3.5 text-sm font-bold hover:bg-green-800 transition-colors uppercase tracking-widest rounded-md shadow-md ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+            className={`flex items-center justify-center min-w-[180px] bg-green-700 text-white px-8 py-3.5 text-sm font-bold hover:bg-green-800 transition-colors uppercase tracking-widest rounded-md shadow-lg ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
           >
             {loading ? 'Mengirim...' : 'Kirim Komentar'}
           </button>
@@ -205,7 +196,7 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
               </div>
               <div className="flex-1">
                 <div className="flex items-baseline gap-2 mb-2">
-                  <h4 className="font-bold text-gray-900 text-sm capitalize">{c.author_name}</h4>
+                  <h4 className="font-bold text-gray-900 text-sm capitalize leading-none">{c.author_name}</h4>
                   <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">
                     • {new Date(c.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </span>
