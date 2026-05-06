@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-// FIX: Menggunakan createBrowserClient agar sinkron dengan SSR/Cookies
 import { createBrowserClient } from '@supabase/ssr';
 
 const supabase = createBrowserClient(
@@ -19,6 +18,12 @@ const IconGoogle = () => (
   </svg>
 );
 
+const IconGithub = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+  </svg>
+);
+
 const IconUser = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
 );
@@ -31,29 +36,27 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
   const [loading, setLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
 
-  // 1. Sinkronisasi Auth & Ambil Data
+  // 1. Monitor Status Auth
   useEffect(() => {
     fetchComments();
 
-    // Ambil session saat ini dari browser client
-    const getInitialUser = async () => {
+    // Ambil session saat ini
+    const syncUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) setCurrentUser(user);
     };
-    getInitialUser();
+    syncUser();
 
-    // LISTENER: Penting agar UI langsung berubah saat balik dari Google/Github
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
+    // Listener perubahan auth (Penting setelah redirect login)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
         setCurrentUser(session.user);
       } else {
         setCurrentUser(null);
       }
     });
 
-    return () => {
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, [postSlug]);
 
   const fetchComments = async () => {
@@ -67,11 +70,9 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
 
   const handleLogin = async (provider: 'google' | 'github') => {
     const currentPath = window.location.pathname;
-    
     await supabase.auth.signInWithOAuth({
       provider,
       options: { 
-        // FIX: Arahkan ke route callback agar menukar 'code' menjadi 'session'
         redirectTo: `${window.location.origin}/auth/callback?next=${currentPath}` 
       }
     });
@@ -111,7 +112,6 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
   return (
     <div className="mt-16 pt-10 border-t border-gray-100">
       
-      {/* HEADER */}
       <div className="flex items-center gap-3 mb-8">
         <h3 className="text-xl font-black text-gray-900 tracking-tight">Diskusi & Komentar</h3>
         <span className="bg-green-100 text-green-800 text-xs font-bold px-2.5 py-0.5 rounded-full">{comments.length}</span>
@@ -120,18 +120,24 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
       {/* AREA LOGIN */}
       {!currentUser ? (
         <div className="mb-10 p-6 bg-gray-50 border border-gray-100 rounded-lg shadow-sm">
-          <p className="text-sm text-gray-600 mb-4 font-medium">Masuk lebih cepat untuk bergabung dalam diskusi:</p>
+          <p className="text-sm text-gray-600 mb-4 font-medium">Masuk untuk bergabung dalam diskusi:</p>
           <div className="flex flex-wrap gap-3">
             <button 
               onClick={() => handleLogin('google')} 
               className="flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-2.5 bg-white border border-gray-200 text-gray-700 text-sm font-bold hover:bg-gray-50 hover:border-gray-300 transition-all rounded-md shadow-sm"
             >
-              <IconGoogle /> Lanjutkan dengan Google
+              <IconGoogle /> Google
+            </button>
+            <button 
+              onClick={() => handleLogin('github')} 
+              className="flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-2.5 bg-[#24292F] text-white text-sm font-bold hover:bg-[#1b1f23] transition-all rounded-md shadow-sm"
+            >
+              <IconGithub /> GitHub
             </button>
           </div>
           <div className="mt-8 flex items-center">
             <div className="flex-grow border-t border-gray-200"></div>
-            <span className="mx-4 text-[10px] text-gray-400 font-bold uppercase tracking-widest">Atau Komentar Sebagai Tamu</span>
+            <span className="mx-4 text-[10px] text-gray-400 font-bold uppercase tracking-widest">Atau Sebagai Tamu</span>
             <div className="flex-grow border-t border-gray-200"></div>
           </div>
         </div>
@@ -191,8 +197,8 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
         ) : (
           comments.map((c) => (
             <div key={c.id} className="flex gap-4 border-b border-gray-50 pb-8 last:border-0">
-              <div className="w-10 h-10 shrink-0 bg-green-100 rounded-full flex items-center justify-center text-green-700 border border-green-50 shadow-sm">
-                <span className="font-black text-sm uppercase">{c.author_name ? c.author_name.charAt(0) : '?'}</span>
+              <div className="w-10 h-10 shrink-0 bg-green-100 rounded-full flex items-center justify-center text-green-700 border border-green-50 shadow-sm font-black text-sm uppercase">
+                {c.author_name ? c.author_name.charAt(0) : '?'}
               </div>
               <div className="flex-1">
                 <div className="flex items-baseline gap-2 mb-2">
