@@ -8,7 +8,7 @@ const supabase = createBrowserClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-// --- ICONS ---
+// --- ICONS (Google, GitHub, User) ---
 const IconGoogle = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -36,18 +36,15 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
   const [loading, setLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
 
-  // 1. Monitor Status Auth
   useEffect(() => {
     fetchComments();
 
-    // Ambil session saat ini
     const syncUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) setCurrentUser(user);
     };
     syncUser();
 
-    // Listener perubahan auth (Penting setelah redirect login)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         setCurrentUser(session.user);
@@ -73,6 +70,7 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
     await supabase.auth.signInWithOAuth({
       provider,
       options: { 
+        // Mengarahkan ke terminal callback sambil membawa URL artikel
         redirectTo: `${window.location.origin}/auth/callback?next=${currentPath}` 
       }
     });
@@ -122,16 +120,10 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
         <div className="mb-10 p-6 bg-gray-50 border border-gray-100 rounded-lg shadow-sm">
           <p className="text-sm text-gray-600 mb-4 font-medium">Masuk untuk bergabung dalam diskusi:</p>
           <div className="flex flex-wrap gap-3">
-            <button 
-              onClick={() => handleLogin('google')} 
-              className="flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-2.5 bg-white border border-gray-200 text-gray-700 text-sm font-bold hover:bg-gray-50 hover:border-gray-300 transition-all rounded-md shadow-sm"
-            >
+            <button onClick={() => handleLogin('google')} className="flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-2.5 bg-white border border-gray-200 text-gray-700 text-sm font-bold hover:bg-gray-50 hover:border-gray-300 transition-all rounded-md shadow-sm">
               <IconGoogle /> Google
             </button>
-            <button 
-              onClick={() => handleLogin('github')} 
-              className="flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-2.5 bg-[#24292F] text-white text-sm font-bold hover:bg-[#1b1f23] transition-all rounded-md shadow-sm"
-            >
+            <button onClick={() => handleLogin('github')} className="flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-2.5 bg-[#24292F] text-white text-sm font-bold hover:bg-[#1b1f23] transition-all rounded-md shadow-sm">
               <IconGithub /> GitHub
             </button>
           </div>
@@ -162,27 +154,13 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
       <form onSubmit={handleSubmit} className="space-y-4 mb-16 relative">
         {!currentUser && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input 
-              type="text" placeholder="Nama Lengkap*" value={name} onChange={(e) => setName(e.target.value)} 
-              className="w-full border border-gray-200 p-3.5 text-sm bg-gray-50 focus:bg-white focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none rounded-md transition-all text-gray-900 shadow-sm" required 
-            />
-            <input 
-              type="email" placeholder="Alamat Email*" value={email} onChange={(e) => setEmail(e.target.value)} 
-              className="w-full border border-gray-200 p-3.5 text-sm bg-gray-50 focus:bg-white focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none rounded-md transition-all text-gray-900 shadow-sm" required 
-            />
+            <input type="text" placeholder="Nama Lengkap*" value={name} onChange={(e) => setName(e.target.value)} className="w-full border border-gray-200 p-3.5 text-sm bg-gray-50 focus:bg-white focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none rounded-md transition-all text-gray-900 shadow-sm" required />
+            <input type="email" placeholder="Alamat Email*" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full border border-gray-200 p-3.5 text-sm bg-gray-50 focus:bg-white focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none rounded-md transition-all text-gray-900 shadow-sm" required />
           </div>
         )}
-        <textarea 
-          placeholder="Tulis pendapat atau pertanyaan Anda di sini..." 
-          rows={4} value={comment} onChange={(e) => setComment(e.target.value)}
-          className="w-full border border-gray-200 p-4 text-sm bg-gray-50 focus:bg-white focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none rounded-md transition-all resize-y text-gray-900 leading-relaxed shadow-sm" required 
-        />
-        
+        <textarea placeholder="Tulis pendapat atau pertanyaan Anda di sini..." rows={4} value={comment} onChange={(e) => setComment(e.target.value)} className="w-full border border-gray-200 p-4 text-sm bg-gray-50 focus:bg-white focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none rounded-md transition-all resize-y text-gray-900 leading-relaxed shadow-sm" required />
         <div className="flex justify-end">
-          <button 
-            disabled={loading} type="submit" 
-            className={`flex items-center justify-center min-w-[180px] bg-green-700 text-white px-8 py-3.5 text-sm font-bold hover:bg-green-800 transition-colors uppercase tracking-widest rounded-md shadow-lg ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
-          >
+          <button disabled={loading} type="submit" className={`flex items-center justify-center min-w-[180px] bg-green-700 text-white px-8 py-3.5 text-sm font-bold hover:bg-green-800 transition-colors uppercase tracking-widest rounded-md shadow-lg ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}>
             {loading ? 'Mengirim...' : 'Kirim Komentar'}
           </button>
         </div>
@@ -191,9 +169,7 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
       {/* DAFTAR KOMENTAR */}
       <div className="space-y-8">
         {comments.length === 0 ? (
-           <p className="text-gray-400 text-sm text-center py-12 bg-gray-50 rounded-lg border border-dashed border-gray-200 font-medium">
-             Belum ada komentar. Jadilah yang pertama berdiskusi!
-           </p>
+           <p className="text-gray-400 text-sm text-center py-12 bg-gray-50 rounded-lg border border-dashed border-gray-200 font-medium">Belum ada komentar. Jadilah yang pertama berdiskusi!</p>
         ) : (
           comments.map((c) => (
             <div key={c.id} className="flex gap-4 border-b border-gray-50 pb-8 last:border-0">
@@ -203,19 +179,14 @@ export default function CommentSection({ postSlug }: { postSlug: string }) {
               <div className="flex-1">
                 <div className="flex items-baseline gap-2 mb-2">
                   <h4 className="font-bold text-gray-900 text-sm capitalize leading-none">{c.author_name}</h4>
-                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">
-                    • {new Date(c.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                  </span>
+                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">• {new Date(c.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                 </div>
-                <p className="text-gray-700 text-sm leading-relaxed text-justify">
-                  {c.content}
-                </p>
+                <p className="text-gray-700 text-sm leading-relaxed text-justify">{c.content}</p>
               </div>
             </div>
           ))
         )}
       </div>
-
     </div>
   );
 }

@@ -5,7 +5,8 @@ import { NextResponse } from 'next/server'
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
-  // Alamat artikel asal (next)
+  
+  // AMBIL ALAMAT ASAL (next). Jika kosong, baru ke homepage (/)
   const next = searchParams.get('next') ?? '/'
 
   if (code) {
@@ -15,17 +16,13 @@ export async function GET(request: Request) {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
-          getAll() {
-            return cookieStore.getAll()
-          },
+          getAll() { return cookieStore.getAll() },
           setAll(cookiesToSet) {
             try {
               cookiesToSet.forEach(({ name, value, options }) =>
                 cookieStore.set(name, value, options)
               )
-            } catch {
-              // Diabaikan jika dipanggil dari Server Component
-            }
+            } catch {}
           },
         },
       }
@@ -34,11 +31,10 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     
     if (!error) {
-      // Sukses! Balikkan ke artikel asal
+      // REDIRECT KE ARTIKEL ASAL
       return NextResponse.redirect(`${origin}${next}`)
     }
   }
 
-  // Jika error, lempar ke halaman error atau home
   return NextResponse.redirect(`${origin}/auth/auth-code-error`)
 }
