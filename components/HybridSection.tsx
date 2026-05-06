@@ -10,7 +10,6 @@ interface HybridSectionProps {
 }
 
 export default async function HybridSection({ title, categorySlug }: HybridSectionProps) {
-  // 1. Query Utama: Coba cari berdasarkan kategori
   const primaryQuery = `*[_type == "post" ${
     categorySlug 
       ? `&& "${categorySlug}" in categories[]->slug.current` 
@@ -27,29 +26,18 @@ export default async function HybridSection({ title, categorySlug }: HybridSecti
 
   let posts = await client.fetch(primaryQuery, {}, { next: { revalidate: 60 } });
 
-  // 2. FALLBACK (SISTEM CADANGAN)
-  // Jika artikel di kategori tersebut kosong (karena kategori belum dibuat di Sanity),
-  // abaikan filter kategori dan ambil 5 artikel terbaru secara umum.
   if (!posts || posts.length === 0) {
     const fallbackQuery = `*[_type == "post"] | order(publishedAt desc)[0...5]{
-      _id,
-      title,
-      "slug": slug.current,
-      mainImage,
-      publishedAt,
-      excerpt,
-      "authorName": author->name
+      _id, title, "slug": slug.current, mainImage, publishedAt, excerpt, "authorName": author->name
     }`;
     posts = await client.fetch(fallbackQuery, {}, { next: { revalidate: 60 } });
   }
 
-  // Jika memang database benar-benar kosong, baru jangan render
   if (!posts || posts.length === 0) return null;
 
   const mainPost = posts[0];
   const sidePosts = posts.slice(1);
 
-  // Helper format tanggal Indonesia
   const formatDate = (dateString: string) => {
     if (!dateString) return "Tanggal tidak diketahui";
     return new Date(dateString).toLocaleDateString('id-ID', {
@@ -61,15 +49,14 @@ export default async function HybridSection({ title, categorySlug }: HybridSecti
 
   return (
     <section className="mb-12">
-      {/* Header Section dengan Aksen Hijau Herbanos */}
+      {/* Header Section: Hapus 'uppercase' agar tidak kapital semua */}
       <div className="border-b-2 border-green-700 mb-6 flex">
-        <h2 className="bg-green-700 text-white px-4 py-1.5 font-bold text-sm uppercase">
+        <h2 className="bg-green-700 text-white px-4 py-1.5 font-bold text-sm tracking-tight">
           {title}
         </h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* KOLOM KIRI: Post Utama (Besar) */}
         <div className="flex flex-col">
           <Link href={`/${mainPost.slug}`} className="group block">
             <div className="relative h-64 mb-4 overflow-hidden rounded-sm shadow-sm bg-gray-100">
@@ -85,22 +72,23 @@ export default async function HybridSection({ title, categorySlug }: HybridSecti
                 <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400 font-bold uppercase text-xs">No Image</div>
               )}
             </div>
-            <h3 className="text-xl font-bold mb-2 group-hover:text-green-700 transition-colors leading-tight line-clamp-2">
+            <h3 className="text-xl font-bold mb-2 group-hover:text-green-700 transition-colors leading-tight line-clamp-2 tracking-tight text-gray-900">
               {mainPost.title}
             </h3>
           </Link>
           <div className="text-[11px] text-gray-400 mb-3 flex items-center gap-4 uppercase font-bold tracking-wider">
-            <span>{mainPost.authorName || 'Admin'} - {formatDate(mainPost.publishedAt)}</span>
+            <span className="text-green-700/80">{mainPost.authorName || 'Admin'}</span>
+            <span>{formatDate(mainPost.publishedAt)}</span>
             <span className="flex items-center gap-1">
               <MessageSquare className="w-3 h-3"/> 0
             </span>
           </div>
-          <p className="text-sm text-gray-500 italic line-clamp-3 leading-relaxed">
+          {/* FIX: Hapus class 'italic' agar teks tegak/normal */}
+          <p className="text-sm text-gray-500 line-clamp-3 leading-relaxed">
             {mainPost.excerpt || "Baca selengkapnya mengenai informasi kesehatan bermanfaat dari Herbanos..."}
           </p>
         </div>
 
-        {/* KOLOM KANAN: Daftar 4 Post (Kecil) */}
         <div className="flex flex-col gap-5">
           {sidePosts.map((post: any) => (
             <Link 
@@ -121,7 +109,7 @@ export default async function HybridSection({ title, categorySlug }: HybridSecti
                  )}
                </div>
                <div className="flex-1">
-                 <h4 className="text-sm font-bold leading-tight group-hover:text-green-700 transition-colors line-clamp-2 mb-1">
+                 <h4 className="text-sm font-bold leading-tight group-hover:text-green-700 transition-colors line-clamp-2 mb-1 text-gray-900 tracking-tight">
                    {post.title}
                  </h4>
                  <p className="text-[10px] text-gray-400 uppercase font-bold tracking-tighter">

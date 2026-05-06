@@ -4,7 +4,7 @@ import Link from 'next/link';
 import NewsTicker from '@/components/NewsTicker';
 import FeaturedGrid from '@/components/FeaturedGrid';
 import HybridSection from '@/components/HybridSection';
-import { AdsWidget, SocialWidget } from '@/components/SidebarWidgets';
+import { SocialWidget } from '@/components/SidebarWidgets';
 import { client } from '@/sanity/lib/client';
 import { urlFor } from '@/sanity/lib/image';
 
@@ -18,7 +18,7 @@ const formatDate = (dateString: string) => {
   });
 };
 
-// --- KOMPONEN INTERNAL: LATEST POST DENGAN SMART PAGINATION ---
+// --- KOMPONEN INTERNAL: LATEST POST ---
 const LatestPostSection = ({ 
   posts, 
   currentPage, 
@@ -32,11 +32,7 @@ const LatestPostSection = ({
   const getPageNumbers = () => {
     const delta = 2;
     const range = [];
-    for (
-      let i = Math.max(2, currentPage - delta);
-      i <= Math.min(totalPages - 1, currentPage + delta);
-      i++
-    ) {
+    for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
       range.push(i);
     }
     if (currentPage - delta > 2) range.unshift("...");
@@ -65,32 +61,28 @@ const LatestPostSection = ({
             )}
           </div>
           <div className="flex-1">
-            {/* Judul: TANPA UPPERCASE */}
-            <h3 className="text-xl font-bold mb-2 group-hover:text-green-700 transition-colors leading-tight tracking-tight">
+            <h3 className="text-xl font-bold mb-2 text-gray-900 group-hover:text-green-700 transition-colors leading-tight tracking-tight">
               {post.title}
             </h3>
             <div className="flex items-center gap-4 text-[11px] text-gray-400 mb-3 uppercase font-bold tracking-wider">
               <span className="text-green-700/80">{post.authorName || 'Admin'}</span>
               <span>{formatDate(post.publishedAt)}</span>
             </div>
-            <p className="text-sm text-gray-500 line-clamp-3 italic leading-relaxed">
+            {/* FIX: MENGHAPUS CLASS 'italic' PADA CUPLIKAN BERITA */}
+            <p className="text-sm text-gray-500 line-clamp-3 leading-relaxed">
               {post.excerpt || "Baca selengkapnya mengenai artikel kesehatan dan solusi alami hanya di herbanos.id."}
             </p>
           </div>
         </Link>
       ))}
 
-      {/* --- SMART PAGINATION --- */}
+      {/* Pagination */}
       <div className="flex items-center justify-center gap-2 mt-8 flex-wrap">
         {currentPage > 1 && (
-          <Link 
-            href={`/?page=${currentPage - 1}`}
-            className="px-4 py-2 bg-gray-900 text-white text-xs font-bold uppercase hover:bg-green-700 transition-colors rounded-sm shadow-sm"
-          >
+          <Link href={`/?page=${currentPage - 1}`} className="px-4 py-2 bg-gray-900 text-white text-xs font-bold uppercase hover:bg-green-700 rounded-sm shadow-sm transition-colors">
             Kembali
           </Link>
         )}
-        
         <div className="flex gap-1 items-center">
           {getPageNumbers().map((pageNum, i) => (
             <React.Fragment key={i}>
@@ -101,7 +93,7 @@ const LatestPostSection = ({
                   href={`/?page=${pageNum}`}
                   className={`w-9 h-9 flex items-center justify-center text-xs font-bold rounded-sm transition-all border ${
                     currentPage === pageNum 
-                    ? 'bg-green-700 border-green-700 text-white shadow-md scale-105' 
+                    ? 'bg-green-700 border-green-700 text-white shadow-md' 
                     : 'bg-white border-gray-200 text-gray-600 hover:border-green-700 hover:text-green-700'
                   }`}
                 >
@@ -111,12 +103,8 @@ const LatestPostSection = ({
             </React.Fragment>
           ))}
         </div>
-
         {currentPage < totalPages && (
-          <Link 
-            href={`/?page=${currentPage + 1}`}
-            className="px-4 py-2 bg-gray-900 text-white text-xs font-bold uppercase hover:bg-green-700 transition-colors rounded-sm shadow-sm"
-          >
+          <Link href={`/?page=${currentPage + 1}`} className="px-4 py-2 bg-gray-900 text-white text-xs font-bold uppercase hover:bg-green-700 rounded-sm shadow-sm transition-colors">
             Selanjutnya
           </Link>
         )}
@@ -138,8 +126,7 @@ const PopularSection = ({ posts }: { posts: any[] }) => (
           )}
         </div>
         <div className="flex flex-col justify-center">
-          {/* Judul Sidebar: TANPA UPPERCASE */}
-          <h4 className="text-[13px] font-bold leading-tight group-hover:text-green-700 transition-colors line-clamp-2 tracking-tight mb-1">
+          <h4 className="text-[13px] font-bold text-gray-900 leading-tight group-hover:text-green-700 transition-colors line-clamp-2 tracking-tight mb-1">
             {post.title}
           </h4>
           <div className="flex items-center gap-2 text-[9px] text-gray-400 font-bold uppercase">
@@ -153,7 +140,6 @@ const PopularSection = ({ posts }: { posts: any[] }) => (
   </section>
 );
 
-// --- KOMPONEN UTAMA HOMEPAGE ---
 export default async function HomePage({ 
   searchParams 
 }: { 
@@ -166,7 +152,6 @@ export default async function HomePage({
   const startIdx = 5 + (currentPage - 1) * postsPerPage;
   const endIdx = startIdx + postsPerPage;
 
-  // QUERY UPDATE: Mengambil slug berita & data iklan sidebar/header
   const query = `{
     "tickerItems": *[_type == "post"] | order(publishedAt desc)[0...5]{
        title, "slug": slug.current
@@ -191,19 +176,20 @@ export default async function HomePage({
   const totalPages = Math.ceil(totalLatestPosts / postsPerPage);
 
   return (
-    <main className="bg-white pt-[30px] md:pt-[45px]">
+    // FIX: MENAMBAHKAN pt-5 AGAR TIDAK MEPET DENGAN HEADER
+    <main className="bg-white pt-5">
       
-      {/* NewsTicker dengan Link Aktif */}
+      {/* Ticker Berita */}
       <NewsTicker items={data.tickerItems || []} />
       
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <div className="container mx-auto px-4 py-6 max-w-6xl"> 
         
-        {/* Iklan Header (Jika ada) */}
+        {/* Iklan Header */}
         {data.adHeader?.bannerImage && (
-          <div className="mb-10 flex justify-center">
+          <div className="mb-8 flex justify-center">
             <a href={data.adHeader.destinationUrl} target="_blank" rel="nofollow">
-              <div className="relative w-full max-w-[970px] aspect-[16/2] md:aspect-[8/1] overflow-hidden rounded-sm shadow-sm border border-gray-100 bg-gray-50">
-                <Image src={urlFor(data.adHeader.bannerImage).url()} alt="Iklan Header" fill className="object-contain" />
+              <div className="relative w-full max-w-[970px] aspect-[8/1] overflow-hidden rounded-sm shadow-sm border border-gray-100 bg-gray-50">
+                <Image src={urlFor(data.adHeader.bannerImage).url()} alt="Iklan Banner" fill className="object-contain" priority />
               </div>
             </a>
           </div>
@@ -230,7 +216,7 @@ export default async function HomePage({
           <aside className="w-full lg:w-1/3 space-y-12">
             <SocialWidget />
 
-            {/* DYNAMIC SIDEBAR AD */}
+            {/* Iklan Sidebar */}
             {data.adSidebar?.bannerImage && (
               <div className="sticky top-24">
                 <a href={data.adSidebar.destinationUrl} target="_blank" rel="nofollow" className="block group">

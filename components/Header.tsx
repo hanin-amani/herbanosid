@@ -20,9 +20,9 @@ const IconSearch = () => (
 
 const navLinks = [
   { name: "Beranda", href: "/" },
-  { name: "Panduan Bisnis", href: "/category/bisnis" },
-  { name: "Kesehatan", href: "/category/kesehatan" },
-  { name: "Produk", href: "/category/produk" },
+  { name: "Panduan Bisnis", href: "/category/panduan-bisnis" },
+  { name: "Kesehatan", href: "/category/artikel" },
+  { name: "Produk", href: "/category/product-knowledge" },
   { name: "Tentang Kami", href: "/about" },
 ];
 
