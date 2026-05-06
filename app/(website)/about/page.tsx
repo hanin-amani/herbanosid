@@ -134,7 +134,7 @@ export default function AboutPage() {
                 Jangan ragu untuk mendiskusikan keluhan kesehatan Anda dengan tim kami melalui WhatsApp.
               </p>
               <div className="flex flex-wrap justify-center gap-6">
-                <a href="/produk" className="px-12 py-5 bg-green-700 text-white font-black rounded-2xl hover:bg-green-600 transition-all text-sm uppercase tracking-widest shadow-xl shadow-green-900/40">
+                <a href="/category/product-knowledge" className="px-12 py-5 bg-green-700 text-white font-black rounded-2xl hover:bg-green-600 transition-all text-sm uppercase tracking-widest shadow-xl shadow-green-900/40">
                   Tentang Produk
                 </a>
                 <a href="https://wa.me/62895324383400" target="_blank" rel="noopener noreferrer" className="px-12 py-5 bg-white text-gray-900 font-black rounded-2xl hover:bg-gray-100 transition-all text-sm uppercase tracking-widest">
