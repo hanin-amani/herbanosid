@@ -136,16 +136,29 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
                 <PortableText value={post.content} components={portableTextComponents} />
               </div>
 
-              {/* IKLAN BAWAH */}
-              {adBawah?.bannerImage && (
-                <div className="mb-12">
-                  <a href={adBawah.destinationUrl} target="_blank" rel="nofollow">
-                    <div className="relative w-full aspect-[16/5] md:aspect-[16/3] overflow-hidden rounded-sm shadow-lg border border-gray-100 bg-gray-50">
-                      <Image src={urlFor(adBawah.bannerImage).url()} alt="Iklan Promo" fill className="object-cover" />
-                    </div>
-                  </a>
-                </div>
-              )}
+              {/* --- IKLAN BAWAH ARTIKEL (FIXED NO CROP) --- */}
+{adBawah?.bannerImage && (
+  <div className="mb-12">
+    <a href={adBawah.destinationUrl} target="_blank" rel="nofollow">
+      <div className="relative w-full overflow-hidden rounded-sm shadow-lg border border-gray-100 bg-gray-50">
+        {/* 
+            Gunakan aspect-[16/5] secara konsisten untuk resolusi 800x250.
+            Ubah object-cover menjadi object-contain jika ingin benar-benar aman dari potong.
+        */}
+        <div className="aspect-[16/5] relative w-full">
+          <Image 
+            src={urlFor(adBawah.bannerImage).url()} 
+            alt={adBawah.bannerImage.alt || "Iklan Herbanos"} 
+            fill 
+            className="object-contain" // Ini kuncinya agar gambar utuh tidak terpotong
+            priority
+          />
+        </div>
+      </div>
+    </a>
+    <p className="text-[9px] text-gray-300 uppercase tracking-widest mt-2 text-right italic font-bold">Informasi Produk Pilihan</p>
+  </div>
+)}
 
               <ShareActions url={shareUrl} title={post.title} />
 
