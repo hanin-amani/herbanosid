@@ -138,7 +138,7 @@ export default function Header() {
           </div>
           
           <a 
-            href="https://wa.me/628xxxx" 
+            href="https://wa.me/62895324383400" 
             target="_blank"
             rel="noopener noreferrer"
             className="hidden md:block bg-green-700 text-white px-6 py-2.5 rounded-sm text-xs font-bold uppercase tracking-wide hover:bg-green-800 transition-all shadow-md active:scale-95"
