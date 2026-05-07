@@ -68,7 +68,6 @@ const LatestPostSection = ({
               <span className="text-green-700/80">{post.authorName || 'Admin'}</span>
               <span>{formatDate(post.publishedAt)}</span>
             </div>
-            {/* FIX: MENGHAPUS CLASS 'italic' PADA CUPLIKAN BERITA */}
             <p className="text-sm text-gray-500 line-clamp-3 leading-relaxed">
               {post.excerpt || "Baca selengkapnya mengenai artikel kesehatan dan solusi alami hanya di herbanos.id."}
             </p>
@@ -176,10 +175,8 @@ export default async function HomePage({
   const totalPages = Math.ceil(totalLatestPosts / postsPerPage);
 
   return (
-    // FIX: MENAMBAHKAN pt-5 AGAR TIDAK MEPET DENGAN HEADER
     <main className="bg-white pt-5">
       
-      {/* Ticker Berita */}
       <NewsTicker items={data.tickerItems || []} />
       
       <div className="container mx-auto px-4 py-6 max-w-6xl"> 
@@ -216,19 +213,19 @@ export default async function HomePage({
           <aside className="w-full lg:w-1/3 space-y-12">
             <SocialWidget />
 
-            {/* Iklan Sidebar */}
+            <PopularSection posts={data.popularPosts || []} />
+
+            {/* Iklan Sidebar - DIUBAH MENJADI NON-STICKY & DI TARUH DI BAWAH POPULAR */}
             {data.adSidebar?.bannerImage && (
-              <div className="sticky top-24">
+              <div className="relative">
                 <a href={data.adSidebar.destinationUrl} target="_blank" rel="nofollow" className="block group">
-                  <div className="relative w-full aspect-[4/5] overflow-hidden rounded-sm border border-gray-100 shadow-md">
+                  <div className="relative w-full aspect-[4/5] overflow-hidden rounded-sm border border-gray-100 shadow-md bg-gray-50">
                     <Image src={urlFor(data.adSidebar.bannerImage).url()} alt="Iklan Sidebar" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
                   </div>
                   <p className="text-[9px] text-gray-300 uppercase tracking-widest mt-3 text-center italic font-bold">Informasi Sponsor</p>
                 </a>
               </div>
             )}
-
-            <PopularSection posts={data.popularPosts || []} />
           </aside>
         </div>
       </div>
