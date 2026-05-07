@@ -23,14 +23,32 @@ function calculateReadingTime(content: any[]) {
   return Math.ceil(wordCount / wordsPerMinute);
 }
 
+// --- FIX METADATA: MENGGANTI HERBANOS PALING BELAKANG ---
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const post = await client.fetch(`*[_type == "post" && slug.current == $slug][0]{title, excerpt, mainImage}`, { slug });
+  
   if (!post) return { title: 'Not Found' };
+
+  const ogImage = post.mainImage 
+    ? urlFor(post.mainImage).width(1200).height(630).url() 
+    : 'https://herbanos.id/images/og-image.png';
+
   return {
-    title: `${post.title} - Herbanos.id`,
+    title: `${post.title} - Herbanos.id | Solusi Kesehatan Alami`,
     description: post.excerpt,
-    openGraph: { images: post.mainImage ? [urlFor(post.mainImage).url()] : [] }
+    openGraph: {
+      title: `${post.title} - Herbanos.id | Solusi Kesehatan Alami`,
+      description: post.excerpt,
+      url: `https://herbanos.id/${slug}`,
+      type: 'article',
+      images: [{ url: ogImage, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${post.title} - Herbanos.id | Solusi Kesehatan Alami`,
+      images: [ogImage],
+    },
   };
 }
 
@@ -90,13 +108,14 @@ const SidebarSocialWidget = () => {
   );
 };
 
+// --- FIX: GAMBAR PRODUK DENGAN GARIS PUTIH & DROP SHADOW ---
 const SidebarProductWidget = () => (
   <div className="relative bg-gradient-to-br from-green-900 via-green-950 to-black p-8 rounded-3xl overflow-hidden shadow-2xl border border-green-800 group mb-12">
     <div className="absolute -top-24 -right-24 w-64 h-64 bg-green-500/10 rounded-full blur-[100px] group-hover:bg-green-400/20 transition-all duration-700"></div>
     
     <div className="relative z-10 flex flex-col items-center text-center">
-      {/* Gambar Produk dengan Border Putih & Shadow */}
-      <div className="relative w-48 h-48 mb-6 overflow-hidden rounded-2xl border-4 border-white shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all duration-500 group-hover:scale-105">
+      {/* GARIS PUTIH & DROP SHADOW */}
+      <div className="relative w-48 h-48 mb-6 overflow-hidden rounded-2xl border-4 border-white shadow-[0_20px_50px_rgba(0,0,0,0.6)] transition-all duration-500 group-hover:scale-105">
         <Image 
           src="/images/nos.jpg" 
           alt="Natura Oil Squa" 
@@ -234,7 +253,7 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
               <CommentSection postSlug={post.slug} />
             </div>
 
-            {/* SIDEBAR DENGAN FITUR STICKY */}
+            {/* --- SIDEBAR STICKY --- */}
             <aside className="w-full lg:w-1/3">
               <div className="sticky top-24 space-y-12 self-start">
                 {/* 1. Widget Ikuti Kami */}
